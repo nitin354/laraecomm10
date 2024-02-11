@@ -31,6 +31,7 @@ class CategoryController extends Controller
         "name"=> "required",
         "slug"=>["required","unique:categories"],
      ]);
+     
 
      if($validator->passes()){
         $category = new Category();
