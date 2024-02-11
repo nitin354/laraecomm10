@@ -26,13 +26,14 @@
 										<input type="text" name="search" value="{{ Request::get('search') }}" class="form-control float-right" placeholder="Search">
 					
 										<div class="input-group-append">
-										  <button type="submit" class="btn btn-default">
+									 	  <button type="submit" class="btn btn-default">
 											<i class="fas fa-search"></i>
 										  </button>
 										</div>
 									  </div>
 								</div>
                                 </form>
+
 							</div>
 							<div class="card-body table-responsive p-0">								
 								<table class="table table-hover text-nowrap">
@@ -62,7 +63,7 @@
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                         </svg>
                                                         @endif
-
+ 
                                                     </td>
                                                     <td>
                                                         <a href="#">

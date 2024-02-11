@@ -20,6 +20,7 @@ class CategoryController extends Controller
 
    }
 
+
    public function create(){
     //$categories = Category::all();
     return view("admin.category.create");
@@ -42,7 +43,6 @@ class CategoryController extends Controller
         $category->save();
         
         $request->session()->flash("success","category added successfully");
-
         return response()->json(["status"=>true,"message"=>"category added"]);
 
      }else{
