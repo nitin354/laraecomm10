@@ -259,13 +259,13 @@
     $('#category').change(function(){
 		 element = $(this);
 		$.ajax({
-			url:'{{route("product.index")}}',
+			url:'{{route("product-subCategory.index")}}',
 			type: 'get',
 			data:{category_id:element.val()},
 			dataType:'json',
 			success:function(response){
 				
-				console.log(response)
+				//console.log(response)
 				if(response['status'] == true){
                     $('#sub_category').find("option").not(":first").remove();
 

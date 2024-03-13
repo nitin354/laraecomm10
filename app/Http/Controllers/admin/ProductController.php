@@ -108,16 +108,16 @@ class ProductController extends Controller
                     $image = $manager->read($sPath);
                     $image->scaleDown(width:1400);
                     $image->save($dPath);
-
-                    //small 
-                    
-                    $dPath = public_path() ."/uploads/product/small/". $imgname;
-                    $managers = new ImageManager(new Driver());
-                    $images = $managers->read($sPath);
-                    $images->resize(300,300);
-                    $images->save($dPath);
-                    
                     File::copy($sPath,$dPath);
+                    //small 
+                    $sPath1 = public_path() ."/temp/thumb/". $tempimage->name;
+                    $dPath1 = public_path() ."/uploads/product/small/". $imgname;
+                    $managers = new ImageManager(new Driver());
+                    $images = $managers->read($sPath1);
+                    $images->resize(300,300);
+                    $images->save($dPath1);
+                    
+                    File::copy($sPath1,$dPath1);
                     $productimage->image =$imgname;
                     $productimage->save();
 
