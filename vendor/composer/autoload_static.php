@@ -38,6 +38,7 @@ class ComposerStaticInit324c0cf794d6f22166173afd36cf035b
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
+        'ef157334f1067da991ff8953983afdb3' => __DIR__ . '/../..' . '/app/Helpers/helper.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -548,11 +549,13 @@ class ComposerStaticInit324c0cf794d6f22166173afd36cf035b
         'App\\Factories\\ConfigurationFactory' => __DIR__ . '/..' . '/laravel/pint/app/Factories/ConfigurationFactory.php',
         'App\\Factories\\ConfigurationResolverFactory' => __DIR__ . '/..' . '/laravel/pint/app/Factories/ConfigurationResolverFactory.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\FrontController' => __DIR__ . '/../..' . '/app/Http/Controllers/FrontController.php',
         'App\\Http\\Controllers\\ProductSubCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductSubCategoryController.php',
         'App\\Http\\Controllers\\admin\\AdminLoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/admin/AdminLoginController.php',
         'App\\Http\\Controllers\\admin\\CategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/admin/CategoryController.php',
         'App\\Http\\Controllers\\admin\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/admin/HomeController.php',
         'App\\Http\\Controllers\\admin\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/admin/ProductController.php',
+        'App\\Http\\Controllers\\admin\\ProductImageController' => __DIR__ . '/../..' . '/app/Http/Controllers/admin/ProductImageController.php',
         'App\\Http\\Controllers\\admin\\TempImagesController' => __DIR__ . '/../..' . '/app/Http/Controllers/admin/TempImagesController.php',
         'App\\Http\\Controllers\\admin\\subCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/admin/subCategoryController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',

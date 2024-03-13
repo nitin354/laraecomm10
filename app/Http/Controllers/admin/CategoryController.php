@@ -46,6 +46,7 @@ class CategoryController extends Controller
         $category->save();
 
 //save image
+
       if(!empty($request->image_id)){
          $tempImage =TempImage::find($request->image_id);
          $extArray = explode(".",$tempImage->name);
@@ -57,10 +58,16 @@ class CategoryController extends Controller
          $dPath = public_path() ."/uploads/category/". $newImageName;
          
       
-
          File::copy($sPath,$dPath);
+         $sPath1 = public_path() ."/temp/thumb/". $tempImage->name;
+         $dPath1 = public_path() ."/uploads/category/thumb/". $newImageName;
+         File::copy($sPath1,$dPath1);
+         
          $category->image = $newImageName;
          $category->save();
+
+         
+       
 
 
       }
@@ -122,6 +129,12 @@ class CategoryController extends Controller
           $dPath = public_path() ."/uploads/category/". $newImageName;
  
           File::copy($sPath,$dPath);
+
+
+          $sPath1 = public_path() ."/temp/thumb/". $tempImage->name;
+          $dPath1 = public_path() ."/uploads/category/thumb/". $newImageName;
+          File::copy($sPath1,$dPath1);
+        
 
          //  $dPath = public_path() ."/uploads/category/thumb/". $newImageName;
           

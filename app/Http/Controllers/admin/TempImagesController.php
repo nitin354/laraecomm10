@@ -36,26 +36,11 @@ class TempImagesController extends Controller
             // create new image instance (800 x 600)
             $manager = new ImageManager(new Driver());
             $image = $manager->read($sourcepath);
-           // $image = ImageManager::imagick()->read($sourcepath);
-            
-            $image->scale(300,270);
+            $image->resize(300,270);
             $image->save($destpath);
-            //$destpath = public_path().'/temp/thumb/'.$newName;
-           // create image manager with desired driver
-            // 
 
-            // // read image from file system
-            // $image = $manager->read(public_path().'/temp/'.$newName);
-
-            // // resize image proportionally to 300px width
-            // $image->scale(width: 300);
-
-            // // insert watermark
-            // //$image->place('images/watermark.png');
-
-            // // save modified image in new format 
-            // $image->save(public_path().'/temp/thumb/'.$newName);
-
+            
+        
 
             return response()->json([
                 'status' =>true,

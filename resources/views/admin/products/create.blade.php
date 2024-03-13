@@ -210,7 +210,7 @@
 			success:function(response){
 
                   if(response['status'] == true){
-				    window.location.href="{{ route('category.index') }}"
+				    window.location.href="{{ route('product.index') }}"
 
 
 				  }else{
@@ -259,7 +259,7 @@
     $('#category').change(function(){
 		 element = $(this);
 		$.ajax({
-			url:'{{route("product-subCategory.index")}}',
+			url:'{{route("product.index")}}',
 			type: 'get',
 			data:{category_id:element.val()},
 			dataType:'json',

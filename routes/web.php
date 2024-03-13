@@ -4,8 +4,10 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\HomeController;
 
 use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\ProductImageController;
 use App\Http\Controllers\admin\subCategoryController;
 use App\Http\Controllers\admin\TempImagesController;
+use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ProductSubCategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,10 +24,10 @@ use App\Http\Controllers\admin\AdminLoginController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/',[FrontController::class,'index'])->name('front.home');
 
 Route::group(['prefix'=> 'admin'], function () {
     Route::group(['middleware'=> 'admin.guest'], function () {
@@ -58,6 +60,12 @@ Route::group(['prefix'=> 'admin'], function () {
         Route::get('/product',[ProductController::class,'index'])->name('product.index');
         Route::get('/product/create',[ProductController::class,'create'])->name('product.create');
         Route::post('/product',[ProductController::class,'store'])->name('product.store');
+        Route::get('/product/{product}/edit',[ProductController::class,'edit'])->name('product.edit');
+        Route::put('/product/{product}',[ProductController::class,'update'])->name('product.update');
+        Route::delete('/product/{product}',[ProductController::class,'destroy'])->name('product.delete');
+        
+        Route::post('/product-images/update',[ProductImageController::class,'update'])->name('product-images.update');
+        Route::delete('/product-images',[ProductImageController::class,'destroy'])->name('product-images.destroy');
 
 
 
