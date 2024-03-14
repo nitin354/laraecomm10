@@ -9,6 +9,7 @@ use App\Http\Controllers\admin\subCategoryController;
 use App\Http\Controllers\admin\TempImagesController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ProductSubCategoryController;
+use App\Http\Controllers\ShopController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\AdminLoginController;
@@ -28,12 +29,13 @@ use App\Http\Controllers\admin\AdminLoginController;
 //     return view('welcome');
 // });
 Route::get('/',[FrontController::class,'index'])->name('front.home');
+Route::get('/shop',[ShopController::class,'index'])->name('front.shop');
 
 Route::group(['prefix'=> 'admin'], function () {
     Route::group(['middleware'=> 'admin.guest'], function () {
         Route::get('/login',[AdminLoginController::class,'index'])->name('admin.login');
         Route::post('/authenticate',[AdminLoginController::class,'authenticate'])->name('admin.authenticate');
-
+ 
     });
     Route::group(['middleware'=> 'admin.auth'], function () {
         Route::get('/dashboard',[HomeController::class,'index'])->name('admin.dashboard');
