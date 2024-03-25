@@ -42,10 +42,23 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="mb-3">
+                                                    <label for="description">Short Description</label>
+                                                    <textarea name="short_description" id="short_description" cols="30" rows="10" class="summernote" >{{ $product->short_description }}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
                                                     <label for="description">Description</label>
                                                     <textarea name="description" id="description" cols="30" rows="10" class="summernote" placeholder="Description">{{ $product->description }}</textarea>
                                                 </div>
-                                            </div>                                            
+                                            </div>   
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label for="description">Shipping and Returns</label>
+                                                    <textarea name="shipping_return" id="shipping_return" cols="30" rows="10" class="summernote" >{{ $product->shiiping_return }}</textarea>
+                                                </div>
+                                            </div>   
+                                                                                     
                                         </div>
                                     </div>	                                                                      
                                 </div>
@@ -65,7 +78,7 @@
                                     <div class="col-md-3" id="image-row-{{$image->id}}">
                                         <div class="card">
                                         <input type="hidden" name="image_array[]" value="{{$image->id}}">
-                                        <img src="{{ asset('uploads/product/small/'.$image->image)}}" class="card-img-top" alt="">
+                                        <img src="{{ asset('uploads/product/small/' . $image->image)}}" class="card-img-top" alt="">
                                         <div class="card-body">
                                             <a href="javascript:void(0)" onclick="deleteimage({{$image->id}})" class="btn btn-danger">delete</a>
                                         </div>
@@ -114,12 +127,13 @@
                                                     <label for="barcode">Barcode</label>
                                                     <input type="text" name="barcode" id="barcode" value="{{ $product->barcode }}" class="form-control" placeholder="Barcode">	
                                                 </div>
-                                            </div>   
+                                            </div>  
+                                            
                                             <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <div class="custom-control custom-checkbox">
                                                         <input type="hidden" name="track_qty"  value="No">
-                                                        <input class="custom-control-input" type="checkbox" id="track_qty" name="track_qty" value="Yes" {{ ($product->track_qty == 'Yes') ? 'checked':''}}>
+                                                        <input class="custom-control-input" type="checkbox" id="track_qty" name="track_qty" value="Yes" {{ ($product->track_qty == 'Yes') ? 'checked' : ''}}>
                                                         <label for="track_qty" class="custom-control-label">Track Quantity</label>
                                                     </div>
                                                 </div>
@@ -130,6 +144,24 @@
                                         </div>
                                     </div>	                                                                      
                                 </div>
+
+                                <div class="card mb-3">
+                                    <div class="card-body">	
+                                        <h2 class="h4 mb-3">Related Products</h2>
+                                        <div class="mb-3">
+                                        <select name="related_products[]" multiple  class="related_products w-100" id="related_products" class="form-control">
+                                            @if(!empty ($relatedproduct))
+                                                @foreach($relatedproduct as $relproduct)
+
+                                                    <option selected value="{{ $relproduct->id }}">{{$relproduct->title}}</option>
+
+                                                @endforeach
+
+                                            @endif                                                    
+                                        </select>
+                                        </div>
+                                    </div>
+                                </div>   
                             </div>
                             <div class="col-md-4">
                                 <div class="card mb-3">
@@ -137,8 +169,8 @@
                                         <h2 class="h4 mb-3">Product status</h2>
                                         <div class="mb-3">
                                             <select name="status" id="status" class="form-control">
-                                                <option {{($product->status == '1' )? 'selected':''}} value="1">Active</option>
-                                                <option {{($product->status == '0' )? 'selected':''}}value="0">Block</option>
+                                                <option {{($product->status == '1') ? 'selected' : ''}} value="1">Active</option>
+                                                <option {{($product->status == '0') ? 'selected' : ''}} value="0">Block</option>
                                             </select>
                                         </div>
                                     </div>
@@ -152,7 +184,7 @@
                                             <option value="">Select a Category</option>
                                             @if($category->isNotEmpty())
                                                 @foreach($category as $cat)
-                                                <option {{($product->category_id == $cat->id) ?'selected':''}} value="{{$cat->id}}">{{$cat->name}}</option>
+                                                <option {{($product->category_id == $cat->id) ? 'selected' : ''}} value="{{$cat->id}}">{{$cat->name}}</option>
                                                 @endforeach
                                             @endif
                                             </select>
@@ -166,7 +198,7 @@
                                             
                                             @if($subcategory->isNotEmpty())
                                                 @foreach($subcategory as $scat)
-                                                <option {{($product->sub_category_id == $scat->id) ?'selected':''}} value="{{$scat->id}}">{{$scat->name}}</option>
+                                                <option {{($product->sub_category_id == $scat->id) ? 'selected' : ''}} value="{{$scat->id}}">{{$scat->name}}</option>
                                                 @endforeach
                                             @endif
                                                
@@ -182,7 +214,7 @@
                                             <option value="">Select a Brand</option>
                                             @if($brand->isNotEmpty())
                                                 @foreach($brand as $brands)
-                                                <option {{($product->brand_id == $brands->id) ?'selected':''}} value="{{$brands->id}}">{{$brands->name}}</option>
+                                                <option {{($product->brand_id == $brands->id) ? 'selected' : ''}} value="{{$brands->id}}">{{$brands->name}}</option>
                                                 @endforeach
                                             @endif
                                             </select>
@@ -194,19 +226,21 @@
                                         <h2 class="h4 mb-3">Featured product</h2>
                                         <div class="mb-3">
                                             <select name="is_featured" id="is_featured" class="form-control">
-                                                <option {{($product->is_featured == 'No') ?'selected':''}} value="No">No</option>
-                                                <option {{($product->is_featured == 'Yes') ?'selected':''}} value="Yes">Yes</option>                                                
+                                                <option {{($product->is_featured == 'No') ? 'selected' : ''}} value="No">No</option>
+                                                <option {{($product->is_featured == 'Yes') ? 'selected' : ''}} value="Yes">Yes</option>                                                
                                             </select>
 
                                         </div>
                                     </div>
-                                </div>                                 
+                                </div>    
+                                
+                                
                             </div>
                         </div>
 						
 						<div class="pb-5 pt-3">
-							<button class="btn btn-primary" type="submit">Create</button>
-							<a href="products.html" class="btn btn-outline-dark ml-3">Cancel</a>
+							<button class="btn btn-primary" type="submit">Update</button>
+							<a href="{{route('product.index')}}" class="btn btn-outline-dark ml-3">Cancel</a>
 						</div>
                     </form>
 					</div>
@@ -222,7 +256,7 @@
 		event.preventDefault();
 		var element = $(this);
 		$.ajax({
-			url:'{{route('product.update',$product->id)}}',
+			url:'{{route('product.update', $product->id)}}',
 			type: 'put',
 			data:element.serializeArray(),
 			dataType:'json',
@@ -256,6 +290,21 @@
 		});
 
 	});
+
+    $('.related_products').select2({
+    ajax: {
+        url: '{{ route("product.getProducts") }}',
+        dataType: 'json',
+        tags: true,
+        multiple: true,
+        minimumInputLength: 3,
+        processResults: function (data) {
+            return {
+                results: data.tags
+            };
+        }
+    }
+}); 
 
 	$('#title').change(function(){
 		 element = $(this);

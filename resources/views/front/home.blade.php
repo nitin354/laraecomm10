@@ -105,8 +105,8 @@
                 <div class="col-lg-3">
                     <div class="cat-card">
                         <div class="left">
-                            @if($category->image !="")
-                            <img src="{{asset('uploads/category/thumb/'.$category->image)}}" alt="" class="img-fluid">
+                            @if($category->image != "")
+                            <img src="{{asset('uploads/category/thumb/' . $category->image)}}" alt="" class="img-fluid">
 
                             @endif
                             
@@ -136,27 +136,35 @@
                 @foreach($featured_product as $product)
                 @php
 
-                $productimg = $product->product_images->first();
-                //dd($productimg->image);
+        $productimg = $product->product_images->first();
+        //dd($productimg->image);
 
                 @endphp
                 <div class="col-md-3">
                     <div class="card product-card">
                         <div class="product-image position-relative">
-                            <a href="" class="product-img"><img class="card-img-top" src="{{asset('uploads/product/small/'.$productimg->image)}}" alt=""></a>
+                            <a href="{{route('front.product', [$product->slug])}}" class="product-img">
+                                
+                                @if(!empty ($productimg->image))    
+                                    <img class="card-img-top" src="{{asset('uploads/product/small/' . $productimg->image)}}" alt="">
+                                    @else
+                                    <img class="card-img-top" src="{{asset('admin-assets/img/default-150x150.png')}}" alt="">
+                                    @endif
+                            
+                            </a>
                             <a class="whishlist" href="222"><i class="far fa-heart"></i></a>                            
 
                             <div class="product-action">
-                                <a class="btn btn-dark" href="#">
+                                <a class="btn btn-dark" href="javascript:void(0);" onClick="addToCart( {{ $product->id }} );">
                                     <i class="fa fa-shopping-cart"></i> Add To Cart
                                 </a>                            
                             </div>
                         </div>                        
                         <div class="card-body text-center mt-3">
-                            <a class="h6 link" href="product.php">{{$product->title}}</a>
+                            <a class="h6 link" href="{{route('front.product', [$product->slug])}}">{{$product->title}}</a>
                             <div class="price mt-2">
                                 <span class="h5"><strong>${{$product->price}}</strong></span>
-                                @if($product->compare_price>$product->price)
+                                @if($product->compare_price > $product->price)
                                 <span class="h6 text-underline"><del>${{$product->compare_price}}</del></span>
                                 @endif
                             </div>
@@ -180,27 +188,34 @@
                 @foreach($latest_product as $product)
                 @php
 
-                $productimg = $product->product_images->first();
-                //dd($productimg->image);
+        $productimg = $product->product_images->first();
+        //dd($productimg->image);
 
                 @endphp
                 <div class="col-md-3">
                     <div class="card product-card">
                         <div class="product-image position-relative">
-                            <a href="" class="product-img"><img class="card-img-top" src="{{asset('uploads/product/small/'.$productimg->image)}}" alt=""></a>
+                            <a href="{{route('front.product', [$product->slug])}}" class="product-img">
+                                
+                                @if(!empty ($productimg->image))    
+                                <img class="card-img-top" src="{{asset('uploads/product/small/' . $productimg->image)}}" alt="">
+                                @else
+                                <img class="card-img-top" src="{{asset('admin-assets/img/default-150x150.png')}}" alt="">
+                                @endif
+                            </a>
                             <a class="whishlist" href="222"><i class="far fa-heart"></i></a>                            
 
                             <div class="product-action">
-                                <a class="btn btn-dark" href="#">
+                                <a class="btn btn-dark" href="javascript:void(0);" onClick="addToCart( {{ $product->id }} );">
                                     <i class="fa fa-shopping-cart"></i> Add To Cart
                                 </a>                            
                             </div>
                         </div>                        
                         <div class="card-body text-center mt-3">
-                            <a class="h6 link" href="product.php">{{$product->title}}</a>
+                            <a class="h6 link" href="{{route('front.product', [$product->slug])}}">{{$product->title}}</a>
                             <div class="price mt-2">
                                 <span class="h5"><strong>${{$product->price}}</strong></span>
-                                @if($product->compare_price>$product->price)
+                                @if($product->compare_price > $product->price)
                                 <span class="h6 text-underline"><del>${{$product->compare_price}}</del></span>
                                 @endif
                             </div>

@@ -52,21 +52,21 @@
                                             @foreach ($products as $product)
 											@php
 
-											$productimg = $product->product_images->first();
-											//dd($productimg->image);
+		$productimg = $product->product_images->first();
+		//dd($productimg->image);
 
 											@endphp
 										<tr>
 											<td>{{$product->id}}</td>
 											<td>
 
-											@if(!empty($productimg->image))
+											@if(!empty ($productimg->image))
 												
-											<img src="{{ asset('uploads/product/small/'.$productimg->image)}}" class="img-thumbnail" width="50" >
+											<img src="{{ asset('uploads/product/small/' . $productimg->image)}}" class="img-thumbnail" width="50" >
 											
 											@endif
 											</td>
-											<td><a href="#">{{$product->title}}</a></td>
+											<td><a href="{{route('front.product', [$product->slug])}}">{{$product->title}}</a></td>
 											<td>{{$product->price}}</td>
 											
 											<td>{{$product->sku}}</td>											
@@ -82,7 +82,7 @@
 												@endif
 											</td>
 											<td>
-												<a href="{{route('product.edit',$product->id)}}">
+												<a href="{{route('product.edit', $product->id)}}">
 													<svg class="filament-link-icon w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 														<path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
 													</svg>
@@ -125,7 +125,7 @@
 <script>
 
 function deletproduct(id){
-	var url = '{{route("product.delete","ID") }}';
+	var url = '{{route("product.delete", "ID") }}';
 	var newurl = url.replace("ID",id)
 	if(confirm("are you sure you want to delete?")){
 		$.ajax({

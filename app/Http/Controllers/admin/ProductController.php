@@ -14,53 +14,57 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+
 class ProductController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request)
+    {
 
         $products = Product::latest('id')->with('product_images')->paginate();
         //dd($products);
 
-        if($request->get("search")){
-           $products = $products->where("name","LIKE","%".$request->get("search")."%");
+        if ($request->get("search")) {
+            $products = $products->where("name", "LIKE", "%" . $request->get("search") . "%");
         }
-      //$products = $products->paginate(10);
-      return view("admin.products.list",compact("products"));
-       
+        //$products = $products->paginate(10);
+        return view("admin.products.list", compact("products"));
+
     }
-    public function create(Request $request){
-        $data=[];
-        $category = Category::orderBy("name","Asc")->get();
-        $brand= Brand::orderBy("name","Asc")->get();
-        $data["category"]=$category;
-        $data["brand"]=$brand;
+    public function create(Request $request)
+    {
+        $data = [];
+        $category = Category::orderBy("name", "Asc")->get();
+        $brand = Brand::orderBy("name", "Asc")->get();
+        $data["category"] = $category;
+        $data["brand"] = $brand;
         return view("admin.products.create", $data);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $rules = [
-            'title'=> 'required',
-            'slug'=> 'required|unique:products',
-            'price'=> 'required|numeric',
-            'sku'=> 'required|unique:products',
-            'track_qty'=> 'required|in:Yes,No',
-            'category'=> 'required|numeric',
-            'is_featured'=> 'required|in:Yes,No',
+            'title' => 'required',
+            'slug' => 'required|unique:products',
+            'price' => 'required|numeric',
+            'sku' => 'required|unique:products',
+            'track_qty' => 'required|in:Yes,No',
+            'category' => 'required|numeric',
+            'is_featured' => 'required|in:Yes,No',
         ];
 
-        if(!empty($request->track_qty) && $request->track_qty == 'Yes'){
+        if (!empty ($request->track_qty) && $request->track_qty == 'Yes') {
             $rules['qty'] = 'required|numeric';
 
         }
-        $validate=Validator::make($request->all(), $rules);
+        $validate = Validator::make($request->all(), $rules);
 
-        if($validate->fails()){
+        if ($validate->fails()) {
             return response()->json([
-                'status'=>false,
-                'errors'=> $validate->errors()
+                'status' => false,
+                'errors' => $validate->errors()
             ]);
 
-        }else{
+        } else {
 
             $product = new Product;
 
@@ -78,22 +82,25 @@ class ProductController extends Controller
             $product->sub_category_id = $request->sub_category;
             $product->brand_id = $request->brand;
             $product->is_featured = $request->is_featured;
+            $product->short_description = $request->short_description;
+            $product->shiiping_return = $request->shipping_return;
+            $product->related_products = (!empty ($request->related_products)) ? implode(',', $request->related_products) : '';
             $product->save();
 
 
             //save gallery pics
-            if(!empty($request->image_array)){
+            if (!empty ($request->image_array)) {
                 foreach ($request->image_array as $temp_image_id) {
                     $tempimage = TempImage::find($temp_image_id);
-                    $extarray = explode('.',$tempimage->name);
+                    $extarray = explode('.', $tempimage->name);
                     $ext = last($extarray);
 
                     $productimage = new ProductImages();
-                    $productimage->product_id =$product->id;
+                    $productimage->product_id = $product->id;
                     $productimage->image = 'NULL';
                     $productimage->save();
 
-                    $imgname=$product->id.'-'.$productimage->id.'-'.time().'.'.$ext;
+                    $imgname = $product->id . '-' . $productimage->id . '-' . time() . '.' . $ext;
                     $productimage->image = $imgname;
                     $productimage->save();
 
@@ -102,91 +109,100 @@ class ProductController extends Controller
 
                     //large image
 
-                    $sPath = public_path() ."/temp/". $tempimage->name;
-                    $dPath = public_path() ."/uploads/product/large/". $imgname;
+                    $sPath = public_path() . "/temp/" . $tempimage->name;
+                    $dPath = public_path() . "/uploads/product/large/" . $imgname;
                     $manager = new ImageManager(new Driver());
                     $image = $manager->read($sPath);
-                    $image->scaleDown(width:1400);
+                    $image->scaleDown(width: 1400);
                     $image->save($dPath);
-                    File::copy($sPath,$dPath);
+                    File::copy($sPath, $dPath);
                     //small 
-                    $sPath1 = public_path() ."/temp/thumb/". $tempimage->name;
-                    $dPath1 = public_path() ."/uploads/product/small/". $imgname;
+                    $sPath1 = public_path() . "/temp/thumb/" . $tempimage->name;
+                    $dPath1 = public_path() . "/uploads/product/small/" . $imgname;
                     $managers = new ImageManager(new Driver());
                     $images = $managers->read($sPath1);
-                    $images->resize(300,300);
+                    $images->resize(300, 300);
                     $images->save($dPath1);
-                    
-                    File::copy($sPath1,$dPath1);
-                    $productimage->image =$imgname;
+
+                    File::copy($sPath1, $dPath1);
+                    $productimage->image = $imgname;
                     $productimage->save();
 
                 }
 
             }
 
-            $request->session()->flash('success','Product Added Successfully');
+            $request->session()->flash('success', 'Product Added Successfully');
 
             return response()->json([
-                'status'=>true,
-                'message'=> 'Product Added Successfully'
+                'status' => true,
+                'message' => 'Product Added Successfully'
             ]);
-            
+
 
 
         }
 
     }
 
-    public function edit($id,Request $request){
+    public function edit($id, Request $request)
+    {
 
         $product = Product::find($id);
-        if(empty($product)){
-            $request->session()->flash('error','Product not found');
-            return redirect()->route('product.index')->with('error','Product not found');
+        if (empty ($product)) {
+            $request->session()->flash('error', 'Product not found');
+            return redirect()->route('product.index')->with('error', 'Product not found');
         }
 
-        $productimages = ProductImages::where('product_id',$product->id)->get();
+        $productimages = ProductImages::where('product_id', $product->id)->get();
 
-        $subcategory= subCategory::where('category_id',$product->category_id)->get();
-        $data=[];
-        $category = Category::orderBy("name","Asc")->get();
-        $brand= Brand::orderBy("name","Asc")->get();
-        $data["category"]=$category;
-        $data["brand"]=$brand;
-        $data["product"]=$product;
-        $data["subcategory"]=$subcategory;
-        $data["productimages"]=$productimages;
-       return view('admin.products.edit',$data);
+        $subcategory = subCategory::where('category_id', $product->category_id)->get();
+        $relateproduct = [];
+        if ($product->related_products != '') {
+            $productArray = explode(',', $product->related_products);
+            $relateproduct = Product::whereIn('id', $productArray)->get();
+        }
+
+        $data = [];
+        $category = Category::orderBy("name", "Asc")->get();
+        $brand = Brand::orderBy("name", "Asc")->get();
+        $data["category"] = $category;
+        $data["brand"] = $brand;
+        $data["product"] = $product;
+        $data["subcategory"] = $subcategory;
+        $data["productimages"] = $productimages;
+        $data["relatedproduct"] = $relateproduct;
+        return view('admin.products.edit', $data);
     }
 
-    public function update($id,Request $request){
+    public function update($id, Request $request)
+    {
         $product = Product::find($id);
         $rules = [
-            'title'=> 'required',
-            'slug'=> 'required|unique:products,slug,'.$product->id.',id',
-            'price'=> 'required|numeric',
-            'sku'=> 'required|unique:products,sku,'.$product->id.',id',
-            'track_qty'=> 'required|in:Yes,No',
-            'category'=> 'required|numeric',
-            'is_featured'=> 'required|in:Yes,No',
+            'title' => 'required',
+            'slug' => 'required|unique:products,slug,' . $product->id . ',id',
+            'price' => 'required|numeric',
+            'sku' => 'required|unique:products,sku,' . $product->id . ',id',
+            'track_qty' => 'required|in:Yes,No',
+            'category' => 'required|numeric',
+            'is_featured' => 'required|in:Yes,No',
         ];
 
-        if(!empty($request->track_qty) && $request->track_qty == 'Yes'){
+        if (!empty ($request->track_qty) && $request->track_qty == 'Yes') {
             $rules['qty'] = 'required|numeric';
 
         }
-        $validate=Validator::make($request->all(), $rules);
+        $validate = Validator::make($request->all(), $rules);
 
-        if($validate->fails()){
+        if ($validate->fails()) {
             return response()->json([
-                'status'=>false,
-                'errors'=> $validate->errors()
+                'status' => false,
+                'errors' => $validate->errors()
             ]);
 
-        }else{
+        } else {
 
-           
+
 
             $product->title = $request->title;
             $product->slug = $request->slug;
@@ -202,6 +218,10 @@ class ProductController extends Controller
             $product->sub_category_id = $request->sub_category;
             $product->brand_id = $request->brand;
             $product->is_featured = $request->is_featured;
+            $product->short_description = $request->short_description;
+            $product->shiiping_return = $request->shipping_return;
+            $product->related_products = (!empty ($request->related_products)) ? implode(',', $request->related_products) : '';
+
             $product->save();
 
 
@@ -219,7 +239,7 @@ class ProductController extends Controller
             //         $imgname=$product->id.'-'.$productimage->id.'-'.time().'.'.$ext;
             //         $sPath = public_path() ."/temp/". $tempimage->name;
             //         $dPath = public_path() ."/uploads/product/". $imgname;
-                    
+
             //         File::copy($sPath,$dPath);
             //         $productimage->image =$imgname;
             //         $productimage->save();
@@ -228,50 +248,70 @@ class ProductController extends Controller
 
             // }
 
-            $request->session()->flash('success','Product update Successfully');
+            $request->session()->flash('success', 'Product update Successfully');
 
             return response()->json([
-                'status'=>true,
-                'message'=> 'Product update Successfully'
+                'status' => true,
+                'message' => 'Product update Successfully'
             ]);
-            
+
         }
     }
 
-    public function destroy($id,Request $request){
+    public function destroy($id, Request $request)
+    {
 
         $product = Product::find($id);
 
-        if(empty($product)){
+        if (empty ($product)) {
             return response()->json([
-                'status'=>false,
-                'notfound'=> true
+                'status' => false,
+                'notfound' => true
             ]);
 
         }
 
-        $productimages=ProductImages::where('product_id',$id)->get();
-        File::delete(public_path('uploads/product/large/'.$product));
-        if(!empty($productimages)){
+        $productimages = ProductImages::where('product_id', $id)->get();
+        File::delete(public_path('uploads/product/large/' . $product));
+        if (!empty ($productimages)) {
 
-            foreach($productimages as $productimg){
+            foreach ($productimages as $productimg) {
 
-                File::delete(public_path('uploads/product/large/'.$productimg->image));
-                File::delete(public_path('uploads/product/small/'.$productimg->image));
+                File::delete(public_path('uploads/product/large/' . $productimg->image));
+                File::delete(public_path('uploads/product/small/' . $productimg->image));
 
             }
 
-            ProductImages::where('product_id',$id)->delete();
-           
+            ProductImages::where('product_id', $id)->delete();
+
 
         }
 
         $product->delete();
-        $request->session()->flash('success','Product deleted Successfully');
+        $request->session()->flash('success', 'Product deleted Successfully');
         return response()->json([
-            'status'=>true,
-            'message'=> 'Product deleted Successfully'
+            'status' => true,
+            'message' => 'Product deleted Successfully'
         ]);
 
+    }
+
+    public function getProducts(Request $request)
+    {
+
+        $temproduct = [];
+        if ($request->term !== "") {
+
+            $product = Product::where('title', 'like', '%' . $request->term . '%')->get();
+            if ($product != null) {
+                foreach ($product as $pro) {
+                    $temproduct[] = array('id' => $pro->id, 'text' => $pro->title);
+                }
+            }
+        }
+        return response()->json([
+            'tags' => $temproduct,
+            'status' => true
+        ]);
     }
 }
